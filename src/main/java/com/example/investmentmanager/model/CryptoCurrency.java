@@ -11,7 +11,7 @@ import java.util.UUID;
 @Builder
 public class CryptoCurrency{
     private UUID id;
-    private String CryptoCurrencyName;
+    private String cryptoCurrencyName;
     private BigDecimal price;
     private Double amount;
     private LocalDateTime createdDate;

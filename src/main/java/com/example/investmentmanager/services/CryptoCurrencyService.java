@@ -9,4 +9,12 @@ import java.util.UUID;
 public interface CryptoCurrencyService {
     CryptoCurrency getCryptocurrencyById(UUID uuid);
     List<CryptoCurrency> listCryptoCurrencies();
+
+    CryptoCurrency saveNewCryptoCurrency(CryptoCurrency cryptoCurrency);
+
+    void updateCryptoCurrencyById(UUID cryptoId, CryptoCurrency cryptoCurrency);
+
+    void deleteById(UUID cryptoId);
+
+    void patchCryptoById(UUID cryptoId, CryptoCurrency cryptoCurrency);
 }

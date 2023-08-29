@@ -26,6 +26,7 @@ public class CryptoCurrencyController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+
     @DeleteMapping(CRYPTO_PATH_ID)
     public ResponseEntity deleteById(@PathVariable("cryptoId") UUID cryptoId){
         cryptoCurrencyService.deleteById(cryptoId);
@@ -56,6 +57,6 @@ public class CryptoCurrencyController {
     @GetMapping(CRYPTO_PATH_ID)
     public CryptoCurrency getCryptocurrencyById(@PathVariable("cryptoId") UUID cryptoId) {
         log.debug("Get CryptoCurrency by Id - in controller");
-        return cryptoCurrencyService.getCryptocurrencyById(cryptoId);
+        return cryptoCurrencyService.getCryptocurrencyById(cryptoId).orElseThrow(NotFoundException::new);
     }
 }

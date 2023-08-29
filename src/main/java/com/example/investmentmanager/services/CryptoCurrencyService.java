@@ -4,10 +4,11 @@ import com.example.investmentmanager.model.CryptoCurrency;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface CryptoCurrencyService {
-    CryptoCurrency getCryptocurrencyById(UUID uuid);
+    Optional<CryptoCurrency> getCryptocurrencyById(UUID uuid);
     List<CryptoCurrency> listCryptoCurrencies();
 
     CryptoCurrency saveNewCryptoCurrency(CryptoCurrency cryptoCurrency);

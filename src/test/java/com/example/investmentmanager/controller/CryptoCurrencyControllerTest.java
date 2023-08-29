@@ -15,10 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -53,20 +50,28 @@ class CryptoCurrencyControllerTest {
         cryptoCurrencyServiceImpl = new CryptoCurrencyServiceImpl();
     }
 
+    @Test
+    void getCryptoByIdNotFound() throws Exception {
+
+        given(cryptoCurrencyService.getCryptocurrencyById(any(UUID.class))).willReturn(Optional.empty());
+
+        mockMvc.perform(get(CryptoCurrencyController.CRYPTO_PATH_ID,UUID.randomUUID()))
+                .andExpect(status().isNotFound());
+    }
 
     @Test
     void testPatchCrypto() throws Exception {
         CryptoCurrency cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies().get(0);
 
         Map<String, Object> cryptoMap = new HashMap<>();
-        cryptoMap.put("cryptoCurrencyName","New Name");
+        cryptoMap.put("cryptoCurrencyName", "New Name");
 
         mockMvc.perform(patch(CryptoCurrencyController.CRYPTO_PATH_ID, cryptoCurrency.getId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(cryptoMap)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(cryptoMap)))
                 .andExpect(status().isNoContent());
 
-        verify(cryptoCurrencyService).patchCryptoById(uuidArgumentCaptor.capture(),cryptoCurrencyArgumentCaptor.capture());
+        verify(cryptoCurrencyService).patchCryptoById(uuidArgumentCaptor.capture(), cryptoCurrencyArgumentCaptor.capture());
 
         assertThat(cryptoCurrency.getId()).isEqualTo(uuidArgumentCaptor.getValue());
         assertThat(cryptoMap.get("cryptoCurrencyName")).isEqualTo(cryptoCurrencyArgumentCaptor.getValue().getCryptoCurrencyName());
@@ -79,12 +84,12 @@ class CryptoCurrencyControllerTest {
         CryptoCurrency cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies().get(0);
 
         mockMvc.perform(put(CryptoCurrencyController.CRYPTO_PATH_ID, cryptoCurrency.getId())
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(cryptoCurrency)))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(cryptoCurrency)))
                 .andExpect(status().isNoContent());
 
-        verify(cryptoCurrencyService).updateCryptoCurrencyById(any(UUID.class),any(CryptoCurrency.class));
+        verify(cryptoCurrencyService).updateCryptoCurrencyById(any(UUID.class), any(CryptoCurrency.class));
     }
 
     @Test
@@ -92,13 +97,14 @@ class CryptoCurrencyControllerTest {
         CryptoCurrency cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies().get(0);
 
         mockMvc.perform(delete(CryptoCurrencyController.CRYPTO_PATH_ID, cryptoCurrency.getId())
-                .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
         verify(cryptoCurrencyService).deleteById(uuidArgumentCaptor.capture());
 
         assertThat(cryptoCurrency.getId()).isEqualTo(uuidArgumentCaptor.getValue());
     }
+
     @Test
     void testCreateNewCrypto() throws Exception {
         CryptoCurrency cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies().get(0);
@@ -106,8 +112,8 @@ class CryptoCurrencyControllerTest {
 
         given(cryptoCurrencyService.saveNewCryptoCurrency(any(CryptoCurrency.class))).willReturn(cryptoCurrencyServiceImpl.listCryptoCurrencies().get(1));
         mockMvc.perform(post(CryptoCurrencyController.CRYPTO_PATH)
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(cryptoCurrency)))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"));
@@ -118,24 +124,25 @@ class CryptoCurrencyControllerTest {
     void testListCrypto() throws Exception {
         given(cryptoCurrencyService.listCryptoCurrencies()).willReturn(cryptoCurrencyServiceImpl.listCryptoCurrencies());
         mockMvc.perform(get(CryptoCurrencyController.CRYPTO_PATH)
-                .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()",is(3)));
+                .andExpect(jsonPath("$.length()", is(3)));
 
     }
+
     @Test
     void isValidObject() throws Exception {
         CryptoCurrency testCrypto = cryptoCurrencyServiceImpl.listCryptoCurrencies().get(0);
 
         given(cryptoCurrencyService.getCryptocurrencyById(testCrypto.getId()))
-                .willReturn(testCrypto);
+                .willReturn(Optional.of(testCrypto));
 
         mockMvc.perform(get(CryptoCurrencyController.CRYPTO_PATH + "/" + testCrypto.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id",is(testCrypto.getId().toString())))
-                .andExpect(jsonPath("$.cryptoCurrencyName",is(testCrypto.getCryptoCurrencyName())));
+                .andExpect(jsonPath("$.id", is(testCrypto.getId().toString())))
+                .andExpect(jsonPath("$.cryptoCurrencyName", is(testCrypto.getCryptoCurrencyName())));
     }
 }

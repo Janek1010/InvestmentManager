@@ -95,8 +95,8 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService {
     }
 
     @Override
-    public CryptoCurrency getCryptocurrencyById(UUID uuid) {
+    public Optional<CryptoCurrency> getCryptocurrencyById(UUID uuid) {
         log.debug("Get CryptoCurrency Id in service was called");
-        return cryptoMap.get(uuid);
+        return Optional.of(cryptoMap.get(uuid));
     }
 }

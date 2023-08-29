@@ -8,12 +8,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,6 +40,12 @@ class CryptoCurrencyControllerTest {
     @MockBean
     CryptoCurrencyService cryptoCurrencyService;
 
+    @Captor
+    ArgumentCaptor<UUID> uuidArgumentCaptor;
+
+    @Captor
+    ArgumentCaptor<CryptoCurrency> cryptoCurrencyArgumentCaptor;
+
     CryptoCurrencyServiceImpl cryptoCurrencyServiceImpl;
 
     @BeforeEach
@@ -43,11 +53,32 @@ class CryptoCurrencyControllerTest {
         cryptoCurrencyServiceImpl = new CryptoCurrencyServiceImpl();
     }
 
+
+    @Test
+    void testPatchCrypto() throws Exception {
+        CryptoCurrency cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies().get(0);
+
+        Map<String, Object> cryptoMap = new HashMap<>();
+        cryptoMap.put("cryptoCurrencyName","New Name");
+
+        mockMvc.perform(patch(CryptoCurrencyController.CRYPTO_PATH_ID, cryptoCurrency.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(cryptoMap)))
+                .andExpect(status().isNoContent());
+
+        verify(cryptoCurrencyService).patchCryptoById(uuidArgumentCaptor.capture(),cryptoCurrencyArgumentCaptor.capture());
+
+        assertThat(cryptoCurrency.getId()).isEqualTo(uuidArgumentCaptor.getValue());
+        assertThat(cryptoMap.get("cryptoCurrencyName")).isEqualTo(cryptoCurrencyArgumentCaptor.getValue().getCryptoCurrencyName());
+
+    }
+
+
     @Test
     void testUpdateCrypto() throws Exception {
         CryptoCurrency cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies().get(0);
 
-        mockMvc.perform(put("/api/v1/cryptocurrency/"+ cryptoCurrency.getId())
+        mockMvc.perform(put(CryptoCurrencyController.CRYPTO_PATH_ID, cryptoCurrency.getId())
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(cryptoCurrency)))
@@ -60,11 +91,9 @@ class CryptoCurrencyControllerTest {
     void testDeleteCrypto() throws Exception {
         CryptoCurrency cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies().get(0);
 
-        mockMvc.perform(delete("/api/v1/cryptocurrency/" + cryptoCurrency.getId())
+        mockMvc.perform(delete(CryptoCurrencyController.CRYPTO_PATH_ID, cryptoCurrency.getId())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
-
-        ArgumentCaptor<UUID> uuidArgumentCaptor = ArgumentCaptor.forClass(UUID.class);
 
         verify(cryptoCurrencyService).deleteById(uuidArgumentCaptor.capture());
 
@@ -76,7 +105,7 @@ class CryptoCurrencyControllerTest {
         cryptoCurrency.setId(null);
 
         given(cryptoCurrencyService.saveNewCryptoCurrency(any(CryptoCurrency.class))).willReturn(cryptoCurrencyServiceImpl.listCryptoCurrencies().get(1));
-        mockMvc.perform(post("/api/v1/cryptocurrency")
+        mockMvc.perform(post(CryptoCurrencyController.CRYPTO_PATH)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(cryptoCurrency)))
@@ -88,7 +117,7 @@ class CryptoCurrencyControllerTest {
     @Test
     void testListCrypto() throws Exception {
         given(cryptoCurrencyService.listCryptoCurrencies()).willReturn(cryptoCurrencyServiceImpl.listCryptoCurrencies());
-        mockMvc.perform(get("/api/v1/cryptocurrency")
+        mockMvc.perform(get(CryptoCurrencyController.CRYPTO_PATH)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -102,7 +131,7 @@ class CryptoCurrencyControllerTest {
         given(cryptoCurrencyService.getCryptocurrencyById(testCrypto.getId()))
                 .willReturn(testCrypto);
 
-        mockMvc.perform(get("/api/v1/cryptocurrency/" + testCrypto.getId())
+        mockMvc.perform(get(CryptoCurrencyController.CRYPTO_PATH + "/" + testCrypto.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))

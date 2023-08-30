@@ -1,8 +1,10 @@
 package com.example.investmentmanager.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+@Slf4j
 @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Value Not Found")
 public class NotFoundException extends RuntimeException{
     public NotFoundException() {

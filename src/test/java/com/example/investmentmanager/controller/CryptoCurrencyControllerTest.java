@@ -1,9 +1,8 @@
 package com.example.investmentmanager.controller;
 
-import com.example.investmentmanager.model.CryptoCurrency;
+import com.example.investmentmanager.model.CryptoCurrencyDTO;
 import com.example.investmentmanager.services.CryptoCurrencyService;
 import com.example.investmentmanager.services.CryptoCurrencyServiceImpl;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,7 +40,7 @@ class CryptoCurrencyControllerTest {
     ArgumentCaptor<UUID> uuidArgumentCaptor;
 
     @Captor
-    ArgumentCaptor<CryptoCurrency> cryptoCurrencyArgumentCaptor;
+    ArgumentCaptor<CryptoCurrencyDTO> cryptoCurrencyArgumentCaptor;
 
     CryptoCurrencyServiceImpl cryptoCurrencyServiceImpl;
 
@@ -61,7 +60,7 @@ class CryptoCurrencyControllerTest {
 
     @Test
     void testPatchCrypto() throws Exception {
-        CryptoCurrency cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies().get(0);
+        CryptoCurrencyDTO cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies().get(0);
 
         Map<String, Object> cryptoMap = new HashMap<>();
         cryptoMap.put("cryptoCurrencyName", "New Name");
@@ -81,7 +80,7 @@ class CryptoCurrencyControllerTest {
 
     @Test
     void testUpdateCrypto() throws Exception {
-        CryptoCurrency cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies().get(0);
+        CryptoCurrencyDTO cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies().get(0);
 
         mockMvc.perform(put(CryptoCurrencyController.CRYPTO_PATH_ID, cryptoCurrency.getId())
                         .accept(MediaType.APPLICATION_JSON)
@@ -89,12 +88,12 @@ class CryptoCurrencyControllerTest {
                         .content(objectMapper.writeValueAsString(cryptoCurrency)))
                 .andExpect(status().isNoContent());
 
-        verify(cryptoCurrencyService).updateCryptoCurrencyById(any(UUID.class), any(CryptoCurrency.class));
+        verify(cryptoCurrencyService).updateCryptoCurrencyById(any(UUID.class), any(CryptoCurrencyDTO.class));
     }
 
     @Test
     void testDeleteCrypto() throws Exception {
-        CryptoCurrency cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies().get(0);
+        CryptoCurrencyDTO cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies().get(0);
 
         mockMvc.perform(delete(CryptoCurrencyController.CRYPTO_PATH_ID, cryptoCurrency.getId())
                         .accept(MediaType.APPLICATION_JSON))
@@ -107,10 +106,10 @@ class CryptoCurrencyControllerTest {
 
     @Test
     void testCreateNewCrypto() throws Exception {
-        CryptoCurrency cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies().get(0);
+        CryptoCurrencyDTO cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies().get(0);
         cryptoCurrency.setId(null);
 
-        given(cryptoCurrencyService.saveNewCryptoCurrency(any(CryptoCurrency.class))).willReturn(cryptoCurrencyServiceImpl.listCryptoCurrencies().get(1));
+        given(cryptoCurrencyService.saveNewCryptoCurrency(any(CryptoCurrencyDTO.class))).willReturn(cryptoCurrencyServiceImpl.listCryptoCurrencies().get(1));
         mockMvc.perform(post(CryptoCurrencyController.CRYPTO_PATH)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -133,7 +132,7 @@ class CryptoCurrencyControllerTest {
 
     @Test
     void isValidObject() throws Exception {
-        CryptoCurrency testCrypto = cryptoCurrencyServiceImpl.listCryptoCurrencies().get(0);
+        CryptoCurrencyDTO testCrypto = cryptoCurrencyServiceImpl.listCryptoCurrencies().get(0);
 
         given(cryptoCurrencyService.getCryptocurrencyById(testCrypto.getId()))
                 .willReturn(Optional.of(testCrypto));

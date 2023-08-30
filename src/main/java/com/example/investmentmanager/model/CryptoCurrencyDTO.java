@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Data
 @Builder
-public class CryptoCurrency{
+public class CryptoCurrencyDTO {
     private UUID id;
     private String cryptoCurrencyName;
     private BigDecimal price;

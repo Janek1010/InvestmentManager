@@ -1,6 +1,6 @@
 package com.example.investmentmanager.services;
 
-import com.example.investmentmanager.model.CryptoCurrency;
+import com.example.investmentmanager.model.CryptoCurrencyDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -12,16 +12,16 @@ import java.util.*;
 @Slf4j
 @Service
 public class CryptoCurrencyServiceImpl implements CryptoCurrencyService {
-    private Map<UUID, CryptoCurrency> cryptoMap;
+    private Map<UUID, CryptoCurrencyDTO> cryptoMap;
 
     @Override
-    public List<CryptoCurrency> listCryptoCurrencies() {
+    public List<CryptoCurrencyDTO> listCryptoCurrencies() {
         return new ArrayList<>(cryptoMap.values());
     }
 
     @Override
-    public CryptoCurrency saveNewCryptoCurrency(CryptoCurrency cryptoCurrency) {
-        CryptoCurrency savedCrypto = CryptoCurrency.builder()
+    public CryptoCurrencyDTO saveNewCryptoCurrency(CryptoCurrencyDTO cryptoCurrency) {
+        CryptoCurrencyDTO savedCrypto = CryptoCurrencyDTO.builder()
                 .cryptoCurrencyName(cryptoCurrency.getCryptoCurrencyName())
                 .id(UUID.randomUUID())
                 .createdDate(LocalDateTime.now())
@@ -36,8 +36,8 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService {
     }
 
     @Override
-    public void updateCryptoCurrencyById(UUID cryptoId, CryptoCurrency cryptoCurrency) {
-        CryptoCurrency existing =  cryptoMap.get(cryptoId);
+    public void updateCryptoCurrencyById(UUID cryptoId, CryptoCurrencyDTO cryptoCurrency) {
+        CryptoCurrencyDTO existing =  cryptoMap.get(cryptoId);
         existing.setCryptoCurrencyName(cryptoCurrency.getCryptoCurrencyName());
         existing.setPrice(cryptoCurrency.getPrice());
         existing.setAmount(cryptoCurrency.getAmount());
@@ -50,8 +50,8 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService {
     }
 
     @Override
-    public void patchCryptoById(UUID cryptoId, CryptoCurrency cryptoCurrency) {
-        CryptoCurrency existing = cryptoMap.get(cryptoId);
+    public void patchCryptoById(UUID cryptoId, CryptoCurrencyDTO cryptoCurrency) {
+        CryptoCurrencyDTO existing = cryptoMap.get(cryptoId);
         if (StringUtils.hasText(cryptoCurrency.getCryptoCurrencyName())){
             existing.setCryptoCurrencyName(cryptoCurrency.getCryptoCurrencyName());
         }
@@ -65,7 +65,7 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService {
 
     public CryptoCurrencyServiceImpl() {
         this.cryptoMap = new HashMap<>();
-        CryptoCurrency crypto1 = CryptoCurrency.builder()
+        CryptoCurrencyDTO crypto1 = CryptoCurrencyDTO.builder()
                 .id(UUID.randomUUID())
                 .cryptoCurrencyName("ETH")
                 .amount(12.03)
@@ -73,7 +73,7 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService {
                 .createdDate(LocalDateTime.now())
                 .updateDate(LocalDateTime.now())
                 .build();
-        CryptoCurrency crypto2 = CryptoCurrency.builder()
+        CryptoCurrencyDTO crypto2 = CryptoCurrencyDTO.builder()
                 .id(UUID.randomUUID())
                 .cryptoCurrencyName("BTC")
                 .amount(1.2)
@@ -81,7 +81,7 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService {
                 .createdDate(LocalDateTime.now())
                 .updateDate(LocalDateTime.now())
                 .build();
-        CryptoCurrency crypto3 = CryptoCurrency.builder()
+        CryptoCurrencyDTO crypto3 = CryptoCurrencyDTO.builder()
                 .id(UUID.randomUUID())
                 .cryptoCurrencyName("LTC")
                 .amount(53.1)
@@ -95,8 +95,7 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService {
     }
 
     @Override
-    public Optional<CryptoCurrency> getCryptocurrencyById(UUID uuid) {
-        log.debug("Get CryptoCurrency Id in service was called");
-        return Optional.of(cryptoMap.get(uuid));
+    public Optional<CryptoCurrencyDTO> getCryptocurrencyById(UUID uuid) {
+        return Optional.ofNullable(cryptoMap.get(uuid));
     }
 }

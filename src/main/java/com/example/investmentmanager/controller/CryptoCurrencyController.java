@@ -1,6 +1,6 @@
 package com.example.investmentmanager.controller;
 
-import com.example.investmentmanager.model.CryptoCurrency;
+import com.example.investmentmanager.model.CryptoCurrencyDTO;
 import com.example.investmentmanager.services.CryptoCurrencyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ public class CryptoCurrencyController {
     public static final String CRYPTO_PATH_ID = CRYPTO_PATH+ "/{cryptoId}";
 
     @PatchMapping(CRYPTO_PATH_ID)
-    public ResponseEntity updateCryptoPatchById(@PathVariable("cryptoId") UUID cryptoId, @RequestBody CryptoCurrency cryptoCurrency){
+    public ResponseEntity updateCryptoPatchById(@PathVariable("cryptoId") UUID cryptoId, @RequestBody CryptoCurrencyDTO cryptoCurrency){
         cryptoCurrencyService.patchCryptoById(cryptoId, cryptoCurrency);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
@@ -34,15 +34,15 @@ public class CryptoCurrencyController {
     }
 
     @PutMapping(CRYPTO_PATH_ID)
-    public ResponseEntity updateById(@PathVariable("cryptoId") UUID cryptoId, @RequestBody CryptoCurrency cryptoCurrency){
+    public ResponseEntity updateById(@PathVariable("cryptoId") UUID cryptoId, @RequestBody CryptoCurrencyDTO cryptoCurrency){
 
         cryptoCurrencyService.updateCryptoCurrencyById(cryptoId,cryptoCurrency);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
     @PostMapping(CRYPTO_PATH)
-    public ResponseEntity handlePost(@RequestBody CryptoCurrency cryptoCurrency) {
+    public ResponseEntity handlePost(@RequestBody CryptoCurrencyDTO cryptoCurrency) {
 
-        CryptoCurrency savedCrypto = cryptoCurrencyService.saveNewCryptoCurrency(cryptoCurrency);
+        CryptoCurrencyDTO savedCrypto = cryptoCurrencyService.saveNewCryptoCurrency(cryptoCurrency);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", CRYPTO_PATH +savedCrypto.getId().toString());
@@ -50,13 +50,12 @@ public class CryptoCurrencyController {
     }
 
     @GetMapping(CRYPTO_PATH)
-    public List<CryptoCurrency> listCryptoCurrencies() {
+    public List<CryptoCurrencyDTO> listCryptoCurrencies() {
         return cryptoCurrencyService.listCryptoCurrencies();
     }
 
     @GetMapping(CRYPTO_PATH_ID)
-    public CryptoCurrency getCryptocurrencyById(@PathVariable("cryptoId") UUID cryptoId) {
-        log.debug("Get CryptoCurrency by Id - in controller");
+    public CryptoCurrencyDTO getCryptocurrencyById(@PathVariable("cryptoId") UUID cryptoId){
         return cryptoCurrencyService.getCryptocurrencyById(cryptoId).orElseThrow(NotFoundException::new);
     }
 }

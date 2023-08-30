@@ -1,21 +1,20 @@
 package com.example.investmentmanager.services;
 
-import com.example.investmentmanager.model.CryptoCurrency;
+import com.example.investmentmanager.model.CryptoCurrencyDTO;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface CryptoCurrencyService {
-    Optional<CryptoCurrency> getCryptocurrencyById(UUID uuid);
-    List<CryptoCurrency> listCryptoCurrencies();
+    Optional<CryptoCurrencyDTO> getCryptocurrencyById(UUID uuid);
+    List<CryptoCurrencyDTO> listCryptoCurrencies();
 
-    CryptoCurrency saveNewCryptoCurrency(CryptoCurrency cryptoCurrency);
+    CryptoCurrencyDTO saveNewCryptoCurrency(CryptoCurrencyDTO cryptoCurrency);
 
-    void updateCryptoCurrencyById(UUID cryptoId, CryptoCurrency cryptoCurrency);
+    void updateCryptoCurrencyById(UUID cryptoId, CryptoCurrencyDTO cryptoCurrency);
 
     void deleteById(UUID cryptoId);
 
-    void patchCryptoById(UUID cryptoId, CryptoCurrency cryptoCurrency);
+    void patchCryptoById(UUID cryptoId, CryptoCurrencyDTO cryptoCurrency);
 }

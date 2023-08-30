@@ -1,17 +1,26 @@
-package com.example.investmentmanager.model;
+package com.example.investmentmanager.entities;
 
-import lombok.Builder;
-import lombok.Data;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Version;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @Builder
-public class CryptoCurrencyDTO {
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+public class CryptoCurrency {
+    @Id
     private UUID id;
     private String cryptoCurrencyName;
+
+    @Version
     private Integer version;
     private BigDecimal price;
     private Double amount;

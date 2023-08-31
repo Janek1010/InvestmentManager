@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Primary
@@ -19,12 +20,16 @@ public class CryptoCurrencyServiceJPA implements CryptoCurrencyService {
     private final CryptoCurrencyMapper cryptoCurrencyMapper;
     @Override
     public Optional<CryptoCurrencyDTO> getCryptocurrencyById(UUID uuid) {
-        return Optional.empty();
+        return Optional.ofNullable(cryptoCurrencyMapper.cryptoToCryptoDto(cryptoCurrencyRepository.findById(uuid)
+                .orElse(null)));
     }
 
     @Override
     public List<CryptoCurrencyDTO> listCryptoCurrencies() {
-        return null;
+        return cryptoCurrencyRepository.findAll()
+                .stream()
+                .map(cryptoCurrencyMapper::cryptoToCryptoDto)
+                .collect(Collectors.toList());
     }
 
     @Override

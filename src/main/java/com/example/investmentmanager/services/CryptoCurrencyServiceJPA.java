@@ -34,7 +34,8 @@ public class CryptoCurrencyServiceJPA implements CryptoCurrencyService {
 
     @Override
     public CryptoCurrencyDTO saveNewCryptoCurrency(CryptoCurrencyDTO cryptoCurrency) {
-        return null;
+        return cryptoCurrencyMapper.cryptoToCryptoDto(cryptoCurrencyRepository
+                .save(cryptoCurrencyMapper.cryptoDtoToCrypto(cryptoCurrency)));
     }
 
     @Override

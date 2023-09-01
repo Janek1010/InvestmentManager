@@ -45,7 +45,7 @@ public class CryptoCurrencyController {
         CryptoCurrencyDTO savedCrypto = cryptoCurrencyService.saveNewCryptoCurrency(cryptoCurrency);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Location", CRYPTO_PATH +savedCrypto.getId().toString());
+        headers.add("Location", CRYPTO_PATH +"/"+savedCrypto.getId().toString());
         return new ResponseEntity(headers,HttpStatus.CREATED);
     }
 

@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.assertj.core.api.Assertions.*;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 
 import java.util.List;
@@ -29,6 +31,25 @@ class CryptoCurrencyControllerIT {
         List<CryptoCurrencyDTO> dtos = cryptoCurrencyController.listCryptoCurrencies();
 
         assertThat(dtos.size()).isEqualTo(3);
+    }
+    @Rollback
+    @Transactional
+    @Test
+    void saveNewCryptoTest(){
+        CryptoCurrencyDTO cryptoDto = CryptoCurrencyDTO.builder()
+                .cryptoCurrencyName("New Crypto")
+                .build();
+
+        ResponseEntity responseEntity = cryptoCurrencyController.handlePost(cryptoDto);
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(201));
+        assertThat(responseEntity.getHeaders().getLocation()).isNotNull();
+
+        String[] locationUUID = responseEntity.getHeaders().getLocation().getPath().split("/");
+        UUID savedUUID = UUID.fromString(locationUUID[4]);
+
+        CryptoCurrency cryptoCurrency = cryptoCurrencyRepository.findById(savedUUID).get();
+        assertThat(cryptoCurrency).isNotNull();
     }
 
     @Test

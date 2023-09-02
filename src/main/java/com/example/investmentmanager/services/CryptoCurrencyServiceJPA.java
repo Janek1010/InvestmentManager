@@ -40,7 +40,12 @@ public class CryptoCurrencyServiceJPA implements CryptoCurrencyService {
 
     @Override
     public void updateCryptoCurrencyById(UUID cryptoId, CryptoCurrencyDTO cryptoCurrency) {
-
+        cryptoCurrencyRepository.findById(cryptoId).ifPresent(foundCrypto -> {
+            foundCrypto.setCryptoCurrencyName(cryptoCurrency.getCryptoCurrencyName());
+            foundCrypto.setPrice(cryptoCurrency.getPrice());
+            foundCrypto.setAmount(cryptoCurrency.getAmount());
+            cryptoCurrencyRepository.save(foundCrypto);
+        });
     }
 
     @Override

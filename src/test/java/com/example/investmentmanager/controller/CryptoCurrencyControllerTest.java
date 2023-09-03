@@ -82,6 +82,8 @@ class CryptoCurrencyControllerTest {
     void testUpdateCrypto() throws Exception {
         CryptoCurrencyDTO cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies().get(0);
 
+        given(cryptoCurrencyService.updateCryptoCurrencyById(any(),any())).willReturn(Optional.of(cryptoCurrency));
+
         mockMvc.perform(put(CryptoCurrencyController.CRYPTO_PATH_ID, cryptoCurrency.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)

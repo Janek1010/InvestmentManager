@@ -12,7 +12,7 @@ public interface CryptoCurrencyService {
 
     CryptoCurrencyDTO saveNewCryptoCurrency(CryptoCurrencyDTO cryptoCurrency);
 
-    void updateCryptoCurrencyById(UUID cryptoId, CryptoCurrencyDTO cryptoCurrency);
+    Optional<CryptoCurrencyDTO> updateCryptoCurrencyById(UUID cryptoId, CryptoCurrencyDTO cryptoCurrency);
 
     void deleteById(UUID cryptoId);
 

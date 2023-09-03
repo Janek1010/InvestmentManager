@@ -31,6 +31,13 @@ class CryptoCurrencyControllerIT {
     CryptoCurrencyMapper cryptoCurrencyMapper;
 
     @Test
+    void testUpdateNotFound() {
+        assertThrows(NotFoundException.class, () -> {
+            cryptoCurrencyController.updateById(UUID.randomUUID(),CryptoCurrencyDTO.builder().build());
+        });
+    }
+
+    @Test
     void updateExistingCrypto() {
         CryptoCurrency cryptoCurrency = cryptoCurrencyRepository.findAll().get(0);
         CryptoCurrencyDTO cryptoCurrencyDTO = cryptoCurrencyMapper.cryptoToCryptoDto(cryptoCurrency);

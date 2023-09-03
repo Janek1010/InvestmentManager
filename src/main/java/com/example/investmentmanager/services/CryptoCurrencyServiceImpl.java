@@ -36,12 +36,13 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService {
     }
 
     @Override
-    public void updateCryptoCurrencyById(UUID cryptoId, CryptoCurrencyDTO cryptoCurrency) {
+    public Optional<CryptoCurrencyDTO> updateCryptoCurrencyById(UUID cryptoId, CryptoCurrencyDTO cryptoCurrency) {
         CryptoCurrencyDTO existing =  cryptoMap.get(cryptoId);
         existing.setCryptoCurrencyName(cryptoCurrency.getCryptoCurrencyName());
         existing.setPrice(cryptoCurrency.getPrice());
         existing.setAmount(cryptoCurrency.getAmount());
         cryptoMap.put(existing.getId(),existing);
+        return Optional.of(existing);
     }
 
     @Override

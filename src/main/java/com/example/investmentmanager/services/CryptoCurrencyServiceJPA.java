@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,13 +40,20 @@ public class CryptoCurrencyServiceJPA implements CryptoCurrencyService {
     }
 
     @Override
-    public void updateCryptoCurrencyById(UUID cryptoId, CryptoCurrencyDTO cryptoCurrency) {
-        cryptoCurrencyRepository.findById(cryptoId).ifPresent(foundCrypto -> {
+    public Optional<CryptoCurrencyDTO> updateCryptoCurrencyById(UUID cryptoId, CryptoCurrencyDTO cryptoCurrency) {
+        AtomicReference<Optional<CryptoCurrencyDTO>> atomicReference = new AtomicReference<>();
+
+        cryptoCurrencyRepository.findById(cryptoId).ifPresentOrElse(foundCrypto -> {
             foundCrypto.setCryptoCurrencyName(cryptoCurrency.getCryptoCurrencyName());
             foundCrypto.setPrice(cryptoCurrency.getPrice());
             foundCrypto.setAmount(cryptoCurrency.getAmount());
-            cryptoCurrencyRepository.save(foundCrypto);
+            atomicReference.set(Optional.of(cryptoCurrencyMapper
+                    .cryptoToCryptoDto(cryptoCurrencyRepository.save(foundCrypto))));
+        }, () -> {
+            atomicReference.set(Optional.empty());
         });
+
+        return atomicReference.get();
     }
 
     @Override

@@ -36,7 +36,9 @@ public class CryptoCurrencyController {
     @PutMapping(CRYPTO_PATH_ID)
     public ResponseEntity updateById(@PathVariable("cryptoId") UUID cryptoId, @RequestBody CryptoCurrencyDTO cryptoCurrency){
 
-        cryptoCurrencyService.updateCryptoCurrencyById(cryptoId,cryptoCurrency);
+        if (cryptoCurrencyService.updateCryptoCurrencyById(cryptoId,cryptoCurrency).isEmpty()){
+            throw  new NotFoundException();
+        }
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
     @PostMapping(CRYPTO_PATH)

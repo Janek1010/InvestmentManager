@@ -57,8 +57,12 @@ public class CryptoCurrencyServiceJPA implements CryptoCurrencyService {
     }
 
     @Override
-    public void deleteById(UUID cryptoId) {
-
+    public Boolean deleteById(UUID cryptoId) {
+        if (cryptoCurrencyRepository.existsById(cryptoId)){
+            cryptoCurrencyRepository.deleteById(cryptoId);
+            return true;
+        }
+        return false;
     }
 
     @Override

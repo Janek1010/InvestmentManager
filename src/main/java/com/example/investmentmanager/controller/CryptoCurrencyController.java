@@ -29,7 +29,9 @@ public class CryptoCurrencyController {
 
     @DeleteMapping(CRYPTO_PATH_ID)
     public ResponseEntity deleteById(@PathVariable("cryptoId") UUID cryptoId){
-        cryptoCurrencyService.deleteById(cryptoId);
+        if (!cryptoCurrencyService.deleteById(cryptoId)){
+            throw new NotFoundException();
+        }
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 

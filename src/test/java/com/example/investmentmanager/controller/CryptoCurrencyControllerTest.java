@@ -97,6 +97,8 @@ class CryptoCurrencyControllerTest {
     void testDeleteCrypto() throws Exception {
         CryptoCurrencyDTO cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies().get(0);
 
+        given(cryptoCurrencyService.deleteById(any())).willReturn(true);
+
         mockMvc.perform(delete(CryptoCurrencyController.CRYPTO_PATH_ID, cryptoCurrency.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());

@@ -30,13 +30,35 @@ class CryptoCurrencyControllerIT {
     @Autowired
     CryptoCurrencyMapper cryptoCurrencyMapper;
 
+    @Transactional
+    @Rollback
     @Test
-    void testUpdateNotFound() {
+    void testDeleteNotFound() {
         assertThrows(NotFoundException.class, () -> {
-            cryptoCurrencyController.updateById(UUID.randomUUID(),CryptoCurrencyDTO.builder().build());
+            cryptoCurrencyController.deleteById(UUID.randomUUID());
         });
     }
 
+    @Transactional
+    @Rollback
+    @Test
+    void deleteByIdFound() {
+        CryptoCurrency cryptoCurrency = cryptoCurrencyRepository.findAll().get(0);
+        ResponseEntity responseEntity = cryptoCurrencyController.deleteById(cryptoCurrency.getId());
+
+        assertThat(cryptoCurrencyRepository.findById(cryptoCurrency.getId()).isEmpty());
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(204));
+    }
+
+    @Test
+    void testUpdateNotFound() {
+        assertThrows(NotFoundException.class, () -> {
+            cryptoCurrencyController.updateById(UUID.randomUUID(), CryptoCurrencyDTO.builder().build());
+        });
+    }
+
+    @Transactional
+    @Rollback
     @Test
     void updateExistingCrypto() {
         CryptoCurrency cryptoCurrency = cryptoCurrencyRepository.findAll().get(0);
@@ -46,7 +68,7 @@ class CryptoCurrencyControllerIT {
         final String cryptoName = "UPDATED";
         cryptoCurrencyDTO.setCryptoCurrencyName(cryptoName);
 
-        ResponseEntity responseEntity = cryptoCurrencyController.updateById(cryptoCurrency.getId(),cryptoCurrencyDTO);
+        ResponseEntity responseEntity = cryptoCurrencyController.updateById(cryptoCurrency.getId(), cryptoCurrencyDTO);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(204));
         CryptoCurrency updatedCrypto = cryptoCurrencyRepository.findById(cryptoCurrency.getId()).get();
         assertThat(updatedCrypto.getCryptoCurrencyName()).isEqualTo(cryptoName);

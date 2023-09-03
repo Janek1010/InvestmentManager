@@ -46,8 +46,9 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService {
     }
 
     @Override
-    public void deleteById(UUID cryptoId) {
+    public Boolean deleteById(UUID cryptoId) {
         cryptoMap.remove(cryptoId);
+        return true;
     }
 
     @Override

@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.*;
 
@@ -47,6 +48,20 @@ class CryptoCurrencyControllerTest {
     @BeforeEach
     void setUp() {
         cryptoCurrencyServiceImpl = new CryptoCurrencyServiceImpl();
+    }
+    @Test
+    void testCreateCryptoNullCryptoName() throws Exception{
+        CryptoCurrencyDTO cryptoCurrencyDTO = CryptoCurrencyDTO.builder().build();
+        given(cryptoCurrencyService.saveNewCryptoCurrency(any(CryptoCurrencyDTO.class))).willReturn(cryptoCurrencyServiceImpl.listCryptoCurrencies().get(1));
+
+        MvcResult mvcResult = mockMvc.perform(post(CryptoCurrencyController.CRYPTO_PATH)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(cryptoCurrencyDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()",is(2))).andReturn();
+
+        System.out.println(mvcResult.getResponse().getContentAsString());
     }
 
     @Test

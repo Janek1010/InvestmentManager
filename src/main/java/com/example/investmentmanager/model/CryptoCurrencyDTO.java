@@ -1,5 +1,7 @@
 package com.example.investmentmanager.model;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,6 +13,9 @@ import java.util.UUID;
 @Builder
 public class CryptoCurrencyDTO {
     private UUID id;
+
+    @NotBlank
+    @NotNull
     private String cryptoCurrencyName;
     private Integer version;
     private BigDecimal price;

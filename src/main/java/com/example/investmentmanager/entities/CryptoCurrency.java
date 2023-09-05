@@ -1,6 +1,8 @@
 package com.example.investmentmanager.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -21,11 +23,17 @@ public class CryptoCurrency {
     @Column(length = 36,columnDefinition = "varchar", updatable = false,nullable = false)
     private UUID id;
 
-    private String cryptoCurrencyName;
-
     @Version
     private Integer version;
+
+    @NotNull
+    @NotBlank
+    private String cryptoCurrencyName;
+
+    @NotNull
     private BigDecimal price;
+
+    @NotNull
     private Double amount;
     private LocalDateTime createdDate;
     private LocalDateTime updateDate;

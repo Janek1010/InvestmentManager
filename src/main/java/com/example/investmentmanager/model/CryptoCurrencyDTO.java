@@ -13,12 +13,15 @@ import java.util.UUID;
 @Builder
 public class CryptoCurrencyDTO {
     private UUID id;
+    private Integer version;
 
     @NotBlank
     @NotNull
     private String cryptoCurrencyName;
-    private Integer version;
+
+    @NotNull
     private BigDecimal price;
+    @NotNull
     private Double amount;
     private LocalDateTime createdDate;
     private LocalDateTime updateDate;

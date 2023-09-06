@@ -6,6 +6,7 @@ import com.example.investmentmanager.repositories.CryptoCurrencyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -66,7 +67,25 @@ public class CryptoCurrencyServiceJPA implements CryptoCurrencyService {
     }
 
     @Override
-    public void patchCryptoById(UUID cryptoId, CryptoCurrencyDTO cryptoCurrency) {
+    public Optional<CryptoCurrencyDTO> patchCryptoById(UUID cryptoId, CryptoCurrencyDTO cryptoCurrency) {
+        AtomicReference<Optional<CryptoCurrencyDTO>> atomicReference = new AtomicReference<>();
 
+        cryptoCurrencyRepository.findById(cryptoId).ifPresentOrElse(foundCrypto -> {
+            if (StringUtils.hasText(cryptoCurrency.getCryptoCurrencyName())){
+                foundCrypto.setCryptoCurrencyName(cryptoCurrency.getCryptoCurrencyName());
+            }
+            if (cryptoCurrency.getPrice() != null){
+                foundCrypto.setPrice(cryptoCurrency.getPrice());
+            }
+            if (cryptoCurrency.getAmount() != null){
+                foundCrypto.setAmount(cryptoCurrency.getAmount());
+            }
+            atomicReference.set(Optional.of(cryptoCurrencyMapper
+                    .cryptoToCryptoDto(cryptoCurrencyRepository.save(foundCrypto))));
+        }, () -> {
+            atomicReference.set(Optional.empty());
+        });
+
+        return atomicReference.get();
     }
 }

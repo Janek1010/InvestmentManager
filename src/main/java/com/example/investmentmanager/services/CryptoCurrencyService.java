@@ -16,5 +16,5 @@ public interface CryptoCurrencyService {
 
     Boolean deleteById(UUID cryptoId);
 
-    void patchCryptoById(UUID cryptoId, CryptoCurrencyDTO cryptoCurrency);
+    Optional<CryptoCurrencyDTO> patchCryptoById(UUID cryptoId, CryptoCurrencyDTO cryptoCurrency);
 }

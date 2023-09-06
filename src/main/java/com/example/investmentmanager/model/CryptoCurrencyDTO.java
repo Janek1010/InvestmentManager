@@ -21,7 +21,7 @@ public class CryptoCurrencyDTO {
 
     @NotNull
     private BigDecimal price;
-    @NotNull
+
     private Double amount;
     private LocalDateTime createdDate;
     private LocalDateTime updateDate;

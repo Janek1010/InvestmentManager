@@ -1,3 +1,5 @@
+drop table if exists crypto_currency;
+
 create table crypto_currency
 (
     amount               float(53),

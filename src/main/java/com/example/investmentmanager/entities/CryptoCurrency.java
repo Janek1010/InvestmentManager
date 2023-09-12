@@ -36,6 +36,9 @@ public class CryptoCurrency {
     @Column(length = 50)
     private String cryptoCurrencyName;
 
+    @Column(length = 255)
+    private String contract;
+
     @NotNull
     private BigDecimal price;
 

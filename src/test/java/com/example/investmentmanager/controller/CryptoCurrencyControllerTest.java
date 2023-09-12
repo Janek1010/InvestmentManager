@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,6 +53,8 @@ class CryptoCurrencyControllerTest {
     @Test
     void testCreateCryptoNullCryptoName() throws Exception{
         CryptoCurrencyDTO cryptoCurrencyDTO = CryptoCurrencyDTO.builder().build();
+        cryptoCurrencyDTO.setPrice(BigDecimal.valueOf(123.20));
+
         given(cryptoCurrencyService.saveNewCryptoCurrency(any(CryptoCurrencyDTO.class))).willReturn(cryptoCurrencyServiceImpl.listCryptoCurrencies().get(1));
 
         MvcResult mvcResult = mockMvc.perform(post(CryptoCurrencyController.CRYPTO_PATH)

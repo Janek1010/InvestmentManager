@@ -23,6 +23,7 @@ public class CryptoCurrencyDTO {
     private BigDecimal price;
 
     private Double amount;
+
     private LocalDateTime createdDate;
     private LocalDateTime updateDate;
 }

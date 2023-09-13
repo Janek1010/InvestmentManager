@@ -1,4 +1,4 @@
-crypto_name,price_at_buy_date,date_of_buy,amount,transaction_id
+crypto_name,price_at_buy_date,date_of_buy,amount,row
 DOT,147305.34,2015-03-13,171419.036676,1
 LTC,986808.26,2017-02-01,416451.975399,2
 BTC,332952.04,2011-10-22,129460.78161,3

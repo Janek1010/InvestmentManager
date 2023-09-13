@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CryptoCurrencyCSVRecord {
-    @CsvBindByName(column = "transaction_id")
-    private Integer transaction_id;
+    @CsvBindByName(column = "row")
+    private Integer row;
 
     @CsvBindByName(column = "crypto_name")
     private String crypto_name;

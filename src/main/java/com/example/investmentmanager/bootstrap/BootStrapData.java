@@ -4,7 +4,6 @@ import com.example.investmentmanager.entities.CryptoCurrency;
 import com.example.investmentmanager.model.CryptoCurrencyCSVRecord;
 import com.example.investmentmanager.repositories.CryptoCurrencyRepository;
 import com.example.investmentmanager.services.CryptoCsvService;
-import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -14,10 +13,7 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -29,10 +25,10 @@ public class BootStrapData implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         loadBeerData();
-        loadcsvData();
+        loadCsvData();
     }
 
-    private void loadcsvData() throws FileNotFoundException {
+    private void loadCsvData() throws FileNotFoundException {
         if (cryptoRepository.count() < 10) {
             File file = ResourceUtils.getFile("classpath:csvdata/crypto_transactions.csv");
 

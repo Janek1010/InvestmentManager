@@ -13,6 +13,11 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/***
+ * jak bede rozszerzal projekt o nowe featery to zmienic to na transakcje, ze np jedna waluta cryptocurrency ma liste dostepnych transakcji ktore zostaly wykonane i ktore mozna przejrzec
+ * wtedy mozna dodac takze kolumne kiedy zostalo utworzone
+ */
+
 @Getter
 @Setter
 @Builder

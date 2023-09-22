@@ -27,7 +27,7 @@ public class CryptoCurrencyServiceJPA implements CryptoCurrencyService {
     }
 
     @Override
-    public List<CryptoCurrencyDTO> listCryptoCurrencies() {
+    public List<CryptoCurrencyDTO> listCryptoCurrencies(String cryptoName) {
         return cryptoCurrencyRepository.findAll()
                 .stream()
                 .map(cryptoCurrencyMapper::cryptoToCryptoDto)

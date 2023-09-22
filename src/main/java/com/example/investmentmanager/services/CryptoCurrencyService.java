@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface CryptoCurrencyService {
     Optional<CryptoCurrencyDTO> getCryptocurrencyById(UUID uuid);
-    List<CryptoCurrencyDTO> listCryptoCurrencies();
+    List<CryptoCurrencyDTO> listCryptoCurrencies(String cryptoName);
 
     CryptoCurrencyDTO saveNewCryptoCurrency(CryptoCurrencyDTO cryptoCurrency);
 

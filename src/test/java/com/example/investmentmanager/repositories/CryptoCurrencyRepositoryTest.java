@@ -1,20 +1,34 @@
 package com.example.investmentmanager.repositories;
 
+import com.example.investmentmanager.bootstrap.BootStrapData;
 import com.example.investmentmanager.entities.CryptoCurrency;
+import com.example.investmentmanager.services.CryptoCsvService;
+import com.example.investmentmanager.services.CryptoCsvServiceImpl;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
+@Import({BootStrapData.class, CryptoCsvServiceImpl.class})
 class CryptoCurrencyRepositoryTest {
     @Autowired
     CryptoCurrencyRepository cryptoCurrencyRepository;
+
+    @Test
+    void testGetCryptoListByName(){
+        List<CryptoCurrency> list = cryptoCurrencyRepository.findAllByCryptoCurrencyNameIsLikeIgnoreCase("%ETH%");
+
+        assertThat(list.size()).isEqualTo(100);
+
+    }
 
     @Test
     void testSaveCrypto() {

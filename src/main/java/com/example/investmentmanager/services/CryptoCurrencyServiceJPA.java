@@ -1,5 +1,6 @@
 package com.example.investmentmanager.services;
 
+import com.example.investmentmanager.entities.CryptoCurrency;
 import com.example.investmentmanager.mappers.CryptoCurrencyMapper;
 import com.example.investmentmanager.model.CryptoCurrencyDTO;
 import com.example.investmentmanager.repositories.CryptoCurrencyRepository;
@@ -8,6 +9,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -28,10 +30,21 @@ public class CryptoCurrencyServiceJPA implements CryptoCurrencyService {
 
     @Override
     public List<CryptoCurrencyDTO> listCryptoCurrencies(String cryptoName) {
-        return cryptoCurrencyRepository.findAll()
-                .stream()
+        List<CryptoCurrency> cryptoCurrencyList;
+
+        if (StringUtils.hasText(cryptoName)){
+            cryptoCurrencyList = listCryptoByName(cryptoName);
+        } else {
+            cryptoCurrencyList = cryptoCurrencyRepository.findAll();
+        }
+
+        return cryptoCurrencyList.stream()
                 .map(cryptoCurrencyMapper::cryptoToCryptoDto)
                 .collect(Collectors.toList());
+    }
+
+    List<CryptoCurrency> listCryptoByName(String cryptoName){
+        return new ArrayList<>();
     }
 
     @Override

@@ -83,7 +83,17 @@ class CryptoCurrencyControllerIT {
                 .andExpect(jsonPath("$.size()",is(100)))
                 .andExpect(jsonPath("$.[0].amount").value(IsNull.notNullValue()));
     }
-
+    @Test
+    void testListCryptoByNameAndShowInventoryTruePage2() throws Exception {
+        mockMvc.perform(get(CryptoCurrencyController.CRYPTO_PATH)
+                        .queryParam("cryptoCurrencyName","ETH")
+                        .queryParam("showInventory", "true")
+                        .queryParam("pageNumber", "2")
+                        .queryParam("pageSize", "50"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()",is(111)))
+                .andExpect(jsonPath("$.[0].amount").value(IsNull.notNullValue()));
+    }
     @Test
     void testPatchCryptoBadName() throws Exception {
         CryptoCurrency beer = cryptoCurrencyRepository.findAll().get(0);
@@ -149,7 +159,7 @@ class CryptoCurrencyControllerIT {
 
     @Test
     void testListCryptoCurrencies() {
-        List<CryptoCurrencyDTO> dtos = cryptoCurrencyController.listCryptoCurrencies(null, false);
+        List<CryptoCurrencyDTO> dtos = cryptoCurrencyController.listCryptoCurrencies(null, false, 1, 25);
 
         assertThat(dtos.size()).isEqualTo(1003);
     }
@@ -179,7 +189,7 @@ class CryptoCurrencyControllerIT {
     @Transactional
     void testEmptyList() {
         cryptoCurrencyRepository.deleteAll();
-        List<CryptoCurrencyDTO> dtos = cryptoCurrencyController.listCryptoCurrencies(null, false);
+        List<CryptoCurrencyDTO> dtos = cryptoCurrencyController.listCryptoCurrencies(null, false, 1, 25);
 
         assertThat(dtos.size()).isEqualTo(0);
     }

@@ -6,6 +6,7 @@ import com.example.investmentmanager.model.CryptoCurrencyDTO;
 import com.example.investmentmanager.repositories.CryptoCurrencyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -22,6 +23,9 @@ public class CryptoCurrencyServiceJPA implements CryptoCurrencyService {
     private final CryptoCurrencyRepository cryptoCurrencyRepository;
     private final CryptoCurrencyMapper cryptoCurrencyMapper;
 
+    private final static int DEFAULT_PAGE = 0;
+    private final static int DEFAULT_PAGE_SIZE = 25;
+
     @Override
     public Optional<CryptoCurrencyDTO> getCryptocurrencyById(UUID uuid) {
         return Optional.ofNullable(cryptoCurrencyMapper.cryptoToCryptoDto(cryptoCurrencyRepository.findById(uuid)
@@ -29,7 +33,10 @@ public class CryptoCurrencyServiceJPA implements CryptoCurrencyService {
     }
 
     @Override
-    public List<CryptoCurrencyDTO> listCryptoCurrencies(String cryptoName, Boolean showInventory) {
+    public List<CryptoCurrencyDTO> listCryptoCurrencies(String cryptoName, Boolean showInventory,
+                                                        Integer pageNumber, Integer pageSize) {
+        PageRequest pageRequest = buildPageRequest(pageNumber, pageSize);
+
         List<CryptoCurrency> cryptoCurrencyList;
 
         if (StringUtils.hasText(cryptoName)) {
@@ -38,13 +45,36 @@ public class CryptoCurrencyServiceJPA implements CryptoCurrencyService {
             cryptoCurrencyList = cryptoCurrencyRepository.findAll();
         }
 
-        if(showInventory != null && !showInventory){
+        if (showInventory != null && !showInventory) {
             cryptoCurrencyList.forEach(cryptoCurrency -> cryptoCurrency.setAmount(null));
         }
 
         return cryptoCurrencyList.stream()
                 .map(cryptoCurrencyMapper::cryptoToCryptoDto)
                 .collect(Collectors.toList());
+    }
+
+    public PageRequest buildPageRequest(Integer pageNumber, Integer pageSize) {
+        int queryPageNumber;
+        int queryPageSize;
+
+        if (pageNumber != null && pageNumber > 0) {
+            queryPageNumber = pageNumber - 1;
+        } else {
+            queryPageNumber = DEFAULT_PAGE;
+        }
+
+        if (pageSize == null) {
+            queryPageSize = DEFAULT_PAGE_SIZE;
+        } else {
+            if (pageSize > 1000) {
+                queryPageSize = 1000;
+            } else {
+                queryPageSize = pageSize;
+            }
+        }
+
+        return PageRequest.of(queryPageNumber, queryPageSize);
     }
 
     public List<CryptoCurrency> listCryptoByName(String cryptoName) {

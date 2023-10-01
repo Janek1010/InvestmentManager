@@ -56,8 +56,10 @@ public class CryptoCurrencyController {
 
     @GetMapping(CRYPTO_PATH)
     public List<CryptoCurrencyDTO> listCryptoCurrencies(@RequestParam(required = false) String cryptoCurrencyName,
-                                                        @RequestParam(required = false) Boolean showInventory) {
-        return cryptoCurrencyService.listCryptoCurrencies(cryptoCurrencyName, showInventory);
+                                                        @RequestParam(required = false) Boolean showInventory,
+                                                        @RequestParam(required = false) Integer pageNumber,
+                                                        @RequestParam(required = false) Integer pageSize) {
+        return cryptoCurrencyService.listCryptoCurrencies(cryptoCurrencyName, showInventory, 1, 25);
     }
 
     @GetMapping(CRYPTO_PATH_ID)

@@ -15,7 +15,7 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService {
     private Map<UUID, CryptoCurrencyDTO> cryptoMap;
 
     @Override
-    public List<CryptoCurrencyDTO> listCryptoCurrencies(String cryptoName, Boolean showInventory) {
+    public List<CryptoCurrencyDTO> listCryptoCurrencies(String cryptoName, Boolean showInventory, Integer pageNumber, Integer pageSize) {
         return new ArrayList<>(cryptoMap.values());
     }
 

@@ -6,15 +6,15 @@ import com.example.investmentmanager.model.CryptoCurrencyDTO;
 import com.example.investmentmanager.repositories.CryptoCurrencyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 @Service
 @Primary
@@ -33,25 +33,25 @@ public class CryptoCurrencyServiceJPA implements CryptoCurrencyService {
     }
 
     @Override
-    public List<CryptoCurrencyDTO> listCryptoCurrencies(String cryptoName, Boolean showInventory,
+    public Page<CryptoCurrencyDTO> listCryptoCurrencies(String cryptoName, Boolean showInventory,
                                                         Integer pageNumber, Integer pageSize) {
+
         PageRequest pageRequest = buildPageRequest(pageNumber, pageSize);
 
-        List<CryptoCurrency> cryptoCurrencyList;
+        Page<CryptoCurrency> cryptoPage;
 
         if (StringUtils.hasText(cryptoName)) {
-            cryptoCurrencyList = listCryptoByName(cryptoName);
+            cryptoPage = pageCryptoByName(cryptoName, pageRequest);
         } else {
-            cryptoCurrencyList = cryptoCurrencyRepository.findAll();
+            cryptoPage = cryptoCurrencyRepository.findAll(pageRequest);
         }
 
         if (showInventory != null && !showInventory) {
-            cryptoCurrencyList.forEach(cryptoCurrency -> cryptoCurrency.setAmount(null));
+            cryptoPage.forEach(cryptoCurrency -> cryptoCurrency.setAmount(null));
         }
 
-        return cryptoCurrencyList.stream()
-                .map(cryptoCurrencyMapper::cryptoToCryptoDto)
-                .collect(Collectors.toList());
+        return cryptoPage.map(cryptoCurrencyMapper::cryptoToCryptoDto);
+
     }
 
     public PageRequest buildPageRequest(Integer pageNumber, Integer pageSize) {
@@ -77,8 +77,8 @@ public class CryptoCurrencyServiceJPA implements CryptoCurrencyService {
         return PageRequest.of(queryPageNumber, queryPageSize);
     }
 
-    public List<CryptoCurrency> listCryptoByName(String cryptoName) {
-        return cryptoCurrencyRepository.findAllByCryptoCurrencyNameIsLikeIgnoreCase("%" + cryptoName + "%");
+    public Page<CryptoCurrency> pageCryptoByName(String cryptoName, Pageable pageable) {
+        return cryptoCurrencyRepository.findAllByCryptoCurrencyNameIsLikeIgnoreCase("%" + cryptoName + "%", pageable);
     }
 
     @Override

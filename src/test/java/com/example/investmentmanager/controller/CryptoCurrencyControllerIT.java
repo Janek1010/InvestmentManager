@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -61,27 +62,30 @@ class CryptoCurrencyControllerIT {
     @Test
     void testListCryptoByName() throws Exception {
          mockMvc.perform(get(CryptoCurrencyController.CRYPTO_PATH)
-                 .queryParam("cryptoCurrencyName","ETH"))
+                 .queryParam("cryptoCurrencyName","ETH")
+                         .queryParam("pageSize","800"))
                  .andExpect(status().isOk())
-                 .andExpect(jsonPath("$.size()",is(100)));
+                 .andExpect(jsonPath("$.content.size()",is(100)));
     }
     @Test
     void testListCryptoByNameAndShowInventoryFalse() throws Exception {
         mockMvc.perform(get(CryptoCurrencyController.CRYPTO_PATH)
                         .queryParam("cryptoCurrencyName","ETH")
-                        .queryParam("showInventory", "false"))
+                        .queryParam("showInventory", "false")
+                        .queryParam("pageSize","800"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()",is(100)))
-                .andExpect(jsonPath("$.[0].amount").value(IsNull.nullValue()));
+                .andExpect(jsonPath("$.content.size()",is(100)))
+                .andExpect(jsonPath("$.content[0].amount").value(IsNull.nullValue()));
     }
     @Test
     void testListCryptoByNameAndShowInventoryTrue() throws Exception {
         mockMvc.perform(get(CryptoCurrencyController.CRYPTO_PATH)
                         .queryParam("cryptoCurrencyName","ETH")
-                        .queryParam("showInventory", "true"))
+                        .queryParam("showInventory", "true")
+                        .queryParam("pageSize","800"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()",is(100)))
-                .andExpect(jsonPath("$.[0].amount").value(IsNull.notNullValue()));
+                .andExpect(jsonPath("$.content.size()",is(100)))
+                .andExpect(jsonPath("$.content[0].amount").value(IsNull.notNullValue()));
     }
     @Test
     void testListCryptoByNameAndShowInventoryTruePage2() throws Exception {
@@ -91,8 +95,8 @@ class CryptoCurrencyControllerIT {
                         .queryParam("pageNumber", "2")
                         .queryParam("pageSize", "50"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()",is(111)))
-                .andExpect(jsonPath("$.[0].amount").value(IsNull.notNullValue()));
+                .andExpect(jsonPath("$.content.size()",is(50)))
+                .andExpect(jsonPath("$.content[0].amount").value(IsNull.notNullValue()));
     }
     @Test
     void testPatchCryptoBadName() throws Exception {
@@ -159,9 +163,9 @@ class CryptoCurrencyControllerIT {
 
     @Test
     void testListCryptoCurrencies() {
-        List<CryptoCurrencyDTO> dtos = cryptoCurrencyController.listCryptoCurrencies(null, false, 1, 25);
+        Page<CryptoCurrencyDTO> dtos = cryptoCurrencyController.listCryptoCurrencies(null, false, 1, 25);
 
-        assertThat(dtos.size()).isEqualTo(1003);
+        assertThat(dtos.getContent().size()).isEqualTo(25);
     }
 
     @Rollback
@@ -189,9 +193,9 @@ class CryptoCurrencyControllerIT {
     @Transactional
     void testEmptyList() {
         cryptoCurrencyRepository.deleteAll();
-        List<CryptoCurrencyDTO> dtos = cryptoCurrencyController.listCryptoCurrencies(null, false, 1, 25);
+        Page<CryptoCurrencyDTO> dtos = cryptoCurrencyController.listCryptoCurrencies(null, false, 1, 25);
 
-        assertThat(dtos.size()).isEqualTo(0);
+        assertThat(dtos.getContent().size()).isEqualTo(0);
     }
 
     @Test

@@ -4,13 +4,13 @@ import com.example.investmentmanager.model.CryptoCurrencyDTO;
 import com.example.investmentmanager.services.CryptoCurrencyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -55,11 +55,11 @@ public class CryptoCurrencyController {
     }
 
     @GetMapping(CRYPTO_PATH)
-    public List<CryptoCurrencyDTO> listCryptoCurrencies(@RequestParam(required = false) String cryptoCurrencyName,
+    public Page<CryptoCurrencyDTO> listCryptoCurrencies(@RequestParam(required = false) String cryptoCurrencyName,
                                                         @RequestParam(required = false) Boolean showInventory,
                                                         @RequestParam(required = false) Integer pageNumber,
                                                         @RequestParam(required = false) Integer pageSize) {
-        return cryptoCurrencyService.listCryptoCurrencies(cryptoCurrencyName, showInventory, 1, 25);
+        return cryptoCurrencyService.listCryptoCurrencies(cryptoCurrencyName, showInventory, pageNumber, pageSize);
     }
 
     @GetMapping(CRYPTO_PATH_ID)

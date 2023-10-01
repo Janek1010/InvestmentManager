@@ -1,14 +1,14 @@
 package com.example.investmentmanager.services;
 
 import com.example.investmentmanager.model.CryptoCurrencyDTO;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface CryptoCurrencyService {
     Optional<CryptoCurrencyDTO> getCryptocurrencyById(UUID uuid);
-    List<CryptoCurrencyDTO> listCryptoCurrencies(String cryptoName, Boolean showInventory, Integer pageNumber, Integer pageSize);
+    Page<CryptoCurrencyDTO> listCryptoCurrencies(String cryptoName, Boolean showInventory, Integer pageNumber, Integer pageSize);
 
     CryptoCurrencyDTO saveNewCryptoCurrency(CryptoCurrencyDTO cryptoCurrency);
 

@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -74,7 +75,9 @@ public class CryptoCurrencyServiceJPA implements CryptoCurrencyService {
             }
         }
 
-        return PageRequest.of(queryPageNumber, queryPageSize);
+        Sort sort = Sort.by(Sort.Order.asc("cryptoCurrencyName"));
+
+        return PageRequest.of(queryPageNumber, queryPageSize,sort);
     }
 
     public Page<CryptoCurrency> pageCryptoByName(String cryptoName, Pageable pageable) {

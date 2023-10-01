@@ -6,6 +6,7 @@ import com.example.investmentmanager.model.CryptoCurrencyDTO;
 import com.example.investmentmanager.repositories.CryptoCurrencyRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +64,24 @@ class CryptoCurrencyControllerIT {
                  .queryParam("cryptoCurrencyName","ETH"))
                  .andExpect(status().isOk())
                  .andExpect(jsonPath("$.size()",is(100)));
+    }
+    @Test
+    void testListCryptoByNameAndShowInventoryFalse() throws Exception {
+        mockMvc.perform(get(CryptoCurrencyController.CRYPTO_PATH)
+                        .queryParam("cryptoCurrencyName","ETH")
+                        .queryParam("showInventory", "false"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()",is(100)))
+                .andExpect(jsonPath("$.[0].amount").value(IsNull.nullValue()));
+    }
+    @Test
+    void testListCryptoByNameAndShowInventoryTrue() throws Exception {
+        mockMvc.perform(get(CryptoCurrencyController.CRYPTO_PATH)
+                        .queryParam("cryptoCurrencyName","ETH")
+                        .queryParam("showInventory", "true"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()",is(100)))
+                .andExpect(jsonPath("$.[0].amount").value(IsNull.notNullValue()));
     }
 
     @Test
@@ -131,7 +149,7 @@ class CryptoCurrencyControllerIT {
 
     @Test
     void testListCryptoCurrencies() {
-        List<CryptoCurrencyDTO> dtos = cryptoCurrencyController.listCryptoCurrencies(null);
+        List<CryptoCurrencyDTO> dtos = cryptoCurrencyController.listCryptoCurrencies(null, false);
 
         assertThat(dtos.size()).isEqualTo(1003);
     }
@@ -161,7 +179,7 @@ class CryptoCurrencyControllerIT {
     @Transactional
     void testEmptyList() {
         cryptoCurrencyRepository.deleteAll();
-        List<CryptoCurrencyDTO> dtos = cryptoCurrencyController.listCryptoCurrencies(null);
+        List<CryptoCurrencyDTO> dtos = cryptoCurrencyController.listCryptoCurrencies(null, false);
 
         assertThat(dtos.size()).isEqualTo(0);
     }

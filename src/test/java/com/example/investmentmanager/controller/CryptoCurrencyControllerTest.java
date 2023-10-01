@@ -55,7 +55,7 @@ class CryptoCurrencyControllerTest {
         CryptoCurrencyDTO cryptoCurrencyDTO = CryptoCurrencyDTO.builder().build();
         cryptoCurrencyDTO.setPrice(BigDecimal.valueOf(123.20));
 
-        given(cryptoCurrencyService.saveNewCryptoCurrency(any(CryptoCurrencyDTO.class))).willReturn(cryptoCurrencyServiceImpl.listCryptoCurrencies(null).get(1));
+        given(cryptoCurrencyService.saveNewCryptoCurrency(any(CryptoCurrencyDTO.class))).willReturn(cryptoCurrencyServiceImpl.listCryptoCurrencies(null, false).get(1));
 
         MvcResult mvcResult = mockMvc.perform(post(CryptoCurrencyController.CRYPTO_PATH)
                 .accept(MediaType.APPLICATION_JSON)
@@ -78,7 +78,7 @@ class CryptoCurrencyControllerTest {
 
     @Test
     void testPatchCrypto() throws Exception {
-        CryptoCurrencyDTO cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies(null).get(0);
+        CryptoCurrencyDTO cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies(null, false).get(0);
 
         Map<String, Object> cryptoMap = new HashMap<>();
         cryptoMap.put("cryptoCurrencyName", "New Name");
@@ -98,7 +98,7 @@ class CryptoCurrencyControllerTest {
 
     @Test
     void testUpdateCrypto() throws Exception {
-        CryptoCurrencyDTO cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies(null).get(0);
+        CryptoCurrencyDTO cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies(null, false).get(0);
 
         given(cryptoCurrencyService.updateCryptoCurrencyById(any(),any())).willReturn(Optional.of(cryptoCurrency));
 
@@ -113,7 +113,7 @@ class CryptoCurrencyControllerTest {
 
     @Test
     void testDeleteCrypto() throws Exception {
-        CryptoCurrencyDTO cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies(null).get(0);
+        CryptoCurrencyDTO cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies(null, false).get(0);
 
         given(cryptoCurrencyService.deleteById(any())).willReturn(true);
 
@@ -128,10 +128,10 @@ class CryptoCurrencyControllerTest {
 
     @Test
     void testCreateNewCrypto() throws Exception {
-        CryptoCurrencyDTO cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies(null).get(0);
+        CryptoCurrencyDTO cryptoCurrency = cryptoCurrencyServiceImpl.listCryptoCurrencies(null, false).get(0);
         cryptoCurrency.setId(null);
 
-        given(cryptoCurrencyService.saveNewCryptoCurrency(any(CryptoCurrencyDTO.class))).willReturn(cryptoCurrencyServiceImpl.listCryptoCurrencies(null).get(1));
+        given(cryptoCurrencyService.saveNewCryptoCurrency(any(CryptoCurrencyDTO.class))).willReturn(cryptoCurrencyServiceImpl.listCryptoCurrencies(null, false).get(1));
         mockMvc.perform(post(CryptoCurrencyController.CRYPTO_PATH)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -143,7 +143,7 @@ class CryptoCurrencyControllerTest {
 
     @Test
     void testListCrypto() throws Exception {
-        given(cryptoCurrencyService.listCryptoCurrencies(null)).willReturn(cryptoCurrencyServiceImpl.listCryptoCurrencies(null));
+        given(cryptoCurrencyService.listCryptoCurrencies(any(), any())).willReturn(cryptoCurrencyServiceImpl.listCryptoCurrencies(null, false));
         mockMvc.perform(get(CryptoCurrencyController.CRYPTO_PATH)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -154,7 +154,7 @@ class CryptoCurrencyControllerTest {
 
     @Test
     void isValidObject() throws Exception {
-        CryptoCurrencyDTO testCrypto = cryptoCurrencyServiceImpl.listCryptoCurrencies(null).get(0);
+        CryptoCurrencyDTO testCrypto = cryptoCurrencyServiceImpl.listCryptoCurrencies(null, false).get(0);
 
         given(cryptoCurrencyService.getCryptocurrencyById(testCrypto.getId()))
                 .willReturn(Optional.of(testCrypto));

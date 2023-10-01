@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,6 +21,7 @@ import java.util.stream.Collectors;
 public class CryptoCurrencyServiceJPA implements CryptoCurrencyService {
     private final CryptoCurrencyRepository cryptoCurrencyRepository;
     private final CryptoCurrencyMapper cryptoCurrencyMapper;
+
     @Override
     public Optional<CryptoCurrencyDTO> getCryptocurrencyById(UUID uuid) {
         return Optional.ofNullable(cryptoCurrencyMapper.cryptoToCryptoDto(cryptoCurrencyRepository.findById(uuid)
@@ -29,13 +29,17 @@ public class CryptoCurrencyServiceJPA implements CryptoCurrencyService {
     }
 
     @Override
-    public List<CryptoCurrencyDTO> listCryptoCurrencies(String cryptoName) {
+    public List<CryptoCurrencyDTO> listCryptoCurrencies(String cryptoName, Boolean showInventory) {
         List<CryptoCurrency> cryptoCurrencyList;
 
-        if (StringUtils.hasText(cryptoName)){
+        if (StringUtils.hasText(cryptoName)) {
             cryptoCurrencyList = listCryptoByName(cryptoName);
         } else {
             cryptoCurrencyList = cryptoCurrencyRepository.findAll();
+        }
+
+        if(showInventory != null && !showInventory){
+            cryptoCurrencyList.forEach(cryptoCurrency -> cryptoCurrency.setAmount(null));
         }
 
         return cryptoCurrencyList.stream()
@@ -43,8 +47,8 @@ public class CryptoCurrencyServiceJPA implements CryptoCurrencyService {
                 .collect(Collectors.toList());
     }
 
-    List<CryptoCurrency> listCryptoByName(String cryptoName){
-        return new ArrayList<>();
+    public List<CryptoCurrency> listCryptoByName(String cryptoName) {
+        return cryptoCurrencyRepository.findAllByCryptoCurrencyNameIsLikeIgnoreCase("%" + cryptoName + "%");
     }
 
     @Override
@@ -72,7 +76,7 @@ public class CryptoCurrencyServiceJPA implements CryptoCurrencyService {
 
     @Override
     public Boolean deleteById(UUID cryptoId) {
-        if (cryptoCurrencyRepository.existsById(cryptoId)){
+        if (cryptoCurrencyRepository.existsById(cryptoId)) {
             cryptoCurrencyRepository.deleteById(cryptoId);
             return true;
         }
@@ -84,13 +88,13 @@ public class CryptoCurrencyServiceJPA implements CryptoCurrencyService {
         AtomicReference<Optional<CryptoCurrencyDTO>> atomicReference = new AtomicReference<>();
 
         cryptoCurrencyRepository.findById(cryptoId).ifPresentOrElse(foundCrypto -> {
-            if (StringUtils.hasText(cryptoCurrency.getCryptoCurrencyName())){
+            if (StringUtils.hasText(cryptoCurrency.getCryptoCurrencyName())) {
                 foundCrypto.setCryptoCurrencyName(cryptoCurrency.getCryptoCurrencyName());
             }
-            if (cryptoCurrency.getPrice() != null){
+            if (cryptoCurrency.getPrice() != null) {
                 foundCrypto.setPrice(cryptoCurrency.getPrice());
             }
-            if (cryptoCurrency.getAmount() != null){
+            if (cryptoCurrency.getAmount() != null) {
                 foundCrypto.setAmount(cryptoCurrency.getAmount());
             }
             atomicReference.set(Optional.of(cryptoCurrencyMapper
